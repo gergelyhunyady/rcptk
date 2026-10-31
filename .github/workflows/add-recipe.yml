@@ -1,0 +1,62 @@
+name: Recipe Bot
+
+on:
+  repository_dispatch:
+    types: [new-recipe]
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Recipe link, text, or #category (e.g. "https://... #sutik")'
+        required: true
+        type: string
+      category:
+        description: 'Category override (optional)'
+        required: false
+        type: choice
+        options:
+          - auto
+          - levesek
+          - kremek
+          - koretek
+          - husok
+          - sutik
+          - egytaletelek
+          - haletelek
+          - salatak
+        default: auto
+      dry_run:
+        description: 'Dry run (do not commit)'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: recipe-bot
+  cancel-in-progress: false
+
+jobs:
+  process-recipe:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Allows git revert for /undo
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run Recipe Pipeline
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-flash-latest' }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 tools/action_runner.py
+
