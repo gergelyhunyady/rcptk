@@ -1,0 +1,80 @@
+/* Shared stylesheet for all recipe pages.
+   The category colour comes from <body class="cat-<category>">. */
+
+:root {
+    --accent: #5f6368;
+}
+
+body.cat-levesek      { --accent: #cf8a00; } /* soups: golden broth  */
+body.cat-kremek       { --accent: #e8710a; } /* spreads: paprika     */
+body.cat-koretek      { --accent: #9c6b3c; } /* sides: grains/potato */
+body.cat-husok        { --accent: #d93025; } /* meat: red            */
+body.cat-sutik        { --accent: #a142f4; } /* desserts: purple     */
+body.cat-egytaletelek { --accent: #0097a7; } /* one-pot: teal        */
+body.cat-haletelek    { --accent: #4285f4; } /* fish: blue           */
+body.cat-salatak      { --accent: #2f9e4f; } /* salads: green        */
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+h1 {
+    color: var(--accent);
+    border-bottom: 2px solid color-mix(in srgb, var(--accent) 40%, white);
+    padding-bottom: 10px;
+}
+
+h2 {
+    color: var(--accent);
+    margin-top: 30px;
+}
+
+ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+li {
+    margin: 6px 0;
+}
+
+ol {
+    margin-left: 20px;
+}
+
+ol li {
+    margin: 6px 0;
+}
+
+.recipe-note {
+    font-style: italic;
+    color: #666;
+    margin-top: 10px;
+}
+
+.recipe-source {
+    margin-top: 30px;
+    font-size: 0.9rem;
+    color: #5f6368;
+}
+
+.recipe-source a {
+    color: inherit;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 16px;
+    color: #5f6368;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.back-link:hover {
+    color: #202124;
+}
+
