@@ -28,7 +28,8 @@ export default {
       return new Response("Bad Request", { status: 400 });
     }
 
-    const message = update.message || update.edited_message;
+    // edited_message is ignored on purpose: editing a sent message must not re-run the recipe
+    const message = update.message;
     if (!message) {
       return new Response("OK", { status: 200 });
     }
@@ -53,6 +54,21 @@ export default {
       photoFileIds.push(bestPhoto.file_id);
     } else if (message.document && message.document.mime_type?.startsWith("image/")) {
       photoFileIds.push(message.document.file_id);
+    }
+
+    // If this message is a reply (to the bot's "recipe added" message), forward the links in the
+    // replied-to message so the Action knows which recipe to edit.
+    const replyToUrls = [];
+    const replied = message.reply_to_message;
+    if (replied && replied.from?.is_bot) {
+      const repliedText = replied.text || replied.caption || "";
+      for (const ent of replied.entities || replied.caption_entities || []) {
+        if (ent.type === "text_link" && ent.url) {
+          replyToUrls.push(ent.url);
+        } else if (ent.type === "url") {
+          replyToUrls.push(repliedText.slice(ent.offset, ent.offset + ent.length));
+        }
+      }
     }
 
     if (!combinedText && photoFileIds.length === 0) {
@@ -80,6 +96,7 @@ export default {
         text: text,
         caption: caption,
         photo_file_ids: photoFileIds,
+        reply_to_urls: replyToUrls,
       },
     };
 
@@ -113,3 +130,4 @@ export default {
     return new Response("OK", { status: 200 });
   },
 };
+

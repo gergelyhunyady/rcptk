@@ -81,6 +81,7 @@ class Recipe:
     warnings: list[str] = field(default_factory=list)
     source_url: str | None = None
     source_label: str | None = None
+    intro_italic: bool = False  # render the intro as <p><em>…</em></p>
 
     @property
     def slug(self) -> str:
@@ -130,5 +131,19 @@ class Recipe:
             warnings=warnings,
             source_url=data.get("source_url") or None,
             source_label=data.get("source_label") or None,
+            intro_italic=bool(data.get("intro_italic")),
         )
+
+    def to_dict(self) -> dict:
+        """The model-facing view (what the LLM sees / returns); no source or warnings."""
+        return {
+            "title": self.title,
+            "category": self.category,
+            "intro": self.intro,
+            "note": self.note,
+            "sections": [
+                {"heading": s.heading, "kind": s.kind, "lead": s.lead, "items": list(s.items)}
+                for s in self.sections
+            ],
+        }
 

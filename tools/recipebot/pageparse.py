@@ -1,10 +1,8 @@
-"""Test helper: parse an existing hand-written page back into a Recipe dict."""
+"""Parse an existing recipe page back into a Recipe dict (used for edits and tests)."""
 from __future__ import annotations
 
 import re
 from html.parser import HTMLParser
-
-from recipebot.model import DEFAULT_HEADINGS
 
 
 class PageParser(HTMLParser):
@@ -17,6 +15,7 @@ class PageParser(HTMLParser):
         self.href = None
         self.title = ""
         self.intro = None
+        self.intro_italic = False
         self.note = None
         self.sections: list[dict] = []
         self.source = None  # (url, label)
@@ -69,10 +68,9 @@ class PageParser(HTMLParser):
             if not self.sections:
                 if self.cur_class == "recipe-note":
                     self.note = text
-                elif self._p_has_em:
-                    self.unsupported = True  # italic intro right under the title
                 else:
                     self.intro = text
+                    self.intro_italic = self._p_has_em
             elif self.sections[-1]["heading"] == "Forrás" and self.href:
                 self.source = (self.href, text)
             elif self._p_has_em and not self.sections[-1]["list"]:
@@ -95,7 +93,7 @@ class PageParser(HTMLParser):
             secs.append({"heading": s["heading"], "kind": kind, "lead": s["lead"], "items": items})
             if s["list"] and s["paras"]:
                 self.unsupported = True  # list and loose paragraphs in the same section
-        d = {"title": self.title, "category": self.category, "intro": self.intro, "note": self.note, "sections": secs}
+        d = {"title": self.title, "category": self.category, "intro": self.intro, "intro_italic": self.intro_italic, "note": self.note, "sections": secs}
         if self.source:
             d["source_url"], d["source_label"] = self.source
         return d

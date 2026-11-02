@@ -45,7 +45,8 @@ def render_page(r: Recipe) -> str:
         f"{I1}<h1>{_t(r.title)}</h1>",
     ]
     if r.intro:
-        lines.append(f"{I1}<p>{_t(r.intro)}</p>")
+        text = f"<em>{_t(r.intro)}</em>" if r.intro_italic else _t(r.intro)
+        lines.append(f"{I1}<p>{text}</p>")
     if r.note:
         lines.append(f'{I1}<p class="recipe-note">{_t(r.note)}</p>')
     for s in r.sections:

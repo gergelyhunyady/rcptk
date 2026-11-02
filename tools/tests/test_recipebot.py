@@ -11,8 +11,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from page_parser import parse_page  # noqa: E402
 from recipebot import llm, pipeline, siteindex  # noqa: E402
+from recipebot.pageparse import parse_page  # noqa: E402
 from recipebot.model import Recipe, RecipeError, slugify, sort_key  # noqa: E402
 from recipebot.render import render_page  # noqa: E402
 from recipebot.sources import find_jsonld_recipe, parse_html, parse_message, resolve_category  # noqa: E402
@@ -45,7 +45,8 @@ class RoundTrip(unittest.TestCase):
                 self.assertEqual(norm(render_page(Recipe.from_dict(data))), norm(html))
             checked += 1
         print(f"\nround-trip: {checked} pages checked, {len(skipped)} skipped (unsupported layout): {skipped}")
-        self.assertGreater(checked, 40)
+        self.assertEqual(skipped, [])
+        self.assertGreater(checked, 50)
 
 
 SAMPLE = {

@@ -20,3 +20,4 @@ This directory contains the Cloudflare Worker script that relays Telegram messag
    https://api.telegram.org/bot<BOT_TOKEN>/setWebhook?url=<WORKER_URL>&secret_token=<TELEGRAM_SECRET>
    ```
    Telegram will reply with `{"ok":true,"result":true,"description":"Webhook was set"}`.
+

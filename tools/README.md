@@ -23,3 +23,15 @@ Layout: `recipebot/` – `model` (data + validation), `render` (page template), 
 
 Tests: `python3 -m unittest discover -s tools/tests` (includes a round-trip check that the
 renderer reproduces the existing pages).
+
+## Editing existing recipes (via the Telegram bot / Action)
+
+- **Reply** to the bot's "✅ Recept hozzáadva" (or "✏️ módosítva") message with the change, e.g.
+  `légkeveréssel 180°C-on, 25 perc` – the replied-to message's link identifies the recipe.
+- Or send `/edit csokis muffin: a tejet 150 ml-re csökkentsd` (name is matched against the index; if
+  several match, the bot lists them).
+- The bot answers with the changed lines (➖ old / ➕ new) and commits `Edit <title> recipe (bot)`.
+  `/undo` reverts it. Title, category and source link are never changed by an edit.
+
+Code: `recipebot/edit.py` (find / edit / diff), `recipebot/pageparse.py` (page -> recipe).
+After changing `relay/worker.js`, paste it into the Cloudflare Worker again and **Deploy**.
